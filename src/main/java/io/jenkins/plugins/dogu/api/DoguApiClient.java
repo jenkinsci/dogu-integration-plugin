@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import io.jenkins.plugins.dogu.DoguOption;
 import io.jenkins.plugins.dogu.api.DoguApiResponse.RunRoutineResponse;
 import io.jenkins.plugins.dogu.api.DoguApiResponse.UploadApplicationResponse;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
@@ -72,8 +74,6 @@ public class DoguApiClient {
         String url = option.API_URL + "/v1/projects/" + projectId + "/applications";
         URI uri;
 
-        System.out.println("API client: " + isLatest);
-
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
@@ -81,24 +81,26 @@ public class DoguApiClient {
         }
 
         String boundary = UUID.randomUUID().toString();
+
+        ByteArrayOutputStream requestBodyStream = new ByteArrayOutputStream();
         String boundaryLine = "--" + boundary;
         String endBoundaryLine = boundaryLine + "--";
         String contentType = "multipart/form-data; boundary=" + boundary;
-        String isLatestString = isLatest.toString();
 
-        String requestBody = boundaryLine + "\r\nContent-Disposition: form-data; name=\"file\"; filename=\""
-                + fileName + "\"" + "\r\nContent-Type: application/vnd.android.package-archive"
-                + "\r\n\r\n" + boundaryLine + "\r\nContent-Disposition: form-data; name=\"isLatest\";"
-                + isLatestString + "\"" + "\r\nContent-Type: text/plain" + "\r\n\r\n";
+        requestBodyStream.write((boundaryLine + "\r\n").getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n").getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write("Content-Type: application/vnd.android.package-archive\r\n".getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write(fileContent);
+        requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
 
-        byte[] requestBodyBytes = requestBody.getBytes(StandardCharsets.UTF_8);
-        byte[] endBoundaryBytes = ("\r\n" + endBoundaryLine).getBytes(StandardCharsets.UTF_8);
+        requestBodyStream.write((boundaryLine + "\r\n").getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write("Content-Disposition: form-data; name=\"isLatest\"\r\n".getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write(Boolean.toString(isLatest).getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
 
-        byte[] payload = new byte[requestBodyBytes.length + fileContent.length + endBoundaryBytes.length];
-        System.arraycopy(requestBodyBytes, 0, payload, 0, requestBodyBytes.length);
-        System.arraycopy(fileContent, 0, payload, requestBodyBytes.length, fileContent.length);
-        System.arraycopy(
-                endBoundaryBytes, 0, payload, requestBodyBytes.length + fileContent.length, endBoundaryBytes.length);
+        requestBodyStream.write((endBoundaryLine + "\r\n").getBytes(StandardCharsets.UTF_8));
 
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -106,7 +108,7 @@ public class DoguApiClient {
                 .uri(uri)
                 .header("Content-Type", contentType)
                 .header("Authorization", "Bearer " + option.DOGU_TOKEN.getPlainText())
-                .PUT(HttpRequest.BodyPublishers.ofByteArray(payload))
+                .method("PUT", HttpRequest.BodyPublishers.ofByteArray(requestBodyStream.toByteArray()))
                 .build();
 
         HttpResponse<String> response;
