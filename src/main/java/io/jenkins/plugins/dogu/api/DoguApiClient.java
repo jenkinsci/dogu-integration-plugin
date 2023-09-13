@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import io.jenkins.plugins.dogu.DoguOption;
 import io.jenkins.plugins.dogu.api.DoguApiResponse.RunRoutineResponse;
 import io.jenkins.plugins.dogu.api.DoguApiResponse.UploadApplicationResponse;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
