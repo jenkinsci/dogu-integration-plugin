@@ -87,14 +87,17 @@ public class DoguApiClient {
         String contentType = "multipart/form-data; boundary=" + boundary;
 
         requestBodyStream.write((boundaryLine + "\r\n").getBytes(StandardCharsets.UTF_8));
-        requestBodyStream.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n").getBytes(StandardCharsets.UTF_8));
-        requestBodyStream.write("Content-Type: application/vnd.android.package-archive\r\n".getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n")
+                .getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write(
+                "Content-Type: application/vnd.android.package-archive\r\n".getBytes(StandardCharsets.UTF_8));
         requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
         requestBodyStream.write(fileContent);
         requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
 
         requestBodyStream.write((boundaryLine + "\r\n").getBytes(StandardCharsets.UTF_8));
-        requestBodyStream.write("Content-Disposition: form-data; name=\"isLatest\"\r\n".getBytes(StandardCharsets.UTF_8));
+        requestBodyStream.write(
+                "Content-Disposition: form-data; name=\"isLatest\"\r\n".getBytes(StandardCharsets.UTF_8));
         requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
         requestBodyStream.write(Boolean.toString(isLatest).getBytes(StandardCharsets.UTF_8));
         requestBodyStream.write("\r\n".getBytes(StandardCharsets.UTF_8));

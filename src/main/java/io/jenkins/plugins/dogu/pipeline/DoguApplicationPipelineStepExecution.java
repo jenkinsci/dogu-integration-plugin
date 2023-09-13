@@ -28,7 +28,7 @@ public class DoguApplicationPipelineStepExecution extends StepExecution {
         String projectId = step.getProjectId();
         Boolean isLatest = step.getIsLatest();
         String credentialsId = step.getCredentialsId();
-        
+
         System.out.println("applicationPath: " + applicationPath);
         System.out.println("projectId: " + projectId);
         System.out.println("isLatest: " + isLatest.toString());
