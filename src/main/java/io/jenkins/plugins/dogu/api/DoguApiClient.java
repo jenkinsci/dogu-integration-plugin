@@ -67,10 +67,12 @@ public class DoguApiClient {
     }
 
     public static UploadApplicationResponse uploadApplication(
-            String projectId, byte[] fileContent, String fileName, String mimeType, DoguOption option)
+            String projectId, byte[] fileContent, String fileName, String mimeType, Boolean isLatest, DoguOption option)
             throws Exception {
         String url = option.API_URL + "/v1/projects/" + projectId + "/applications";
         URI uri;
+
+        System.out.println("API client: " + isLatest);
 
         try {
             uri = new URI(url);
@@ -82,10 +84,12 @@ public class DoguApiClient {
         String boundaryLine = "--" + boundary;
         String endBoundaryLine = boundaryLine + "--";
         String contentType = "multipart/form-data; boundary=" + boundary;
+        String isLatestString = isLatest.toString();
 
         String requestBody = boundaryLine + "\r\nContent-Disposition: form-data; name=\"file\"; filename=\""
                 + fileName + "\"" + "\r\nContent-Type: application/vnd.android.package-archive"
-                + "\r\n\r\n";
+                + "\r\n\r\n" + boundaryLine + "\r\nContent-Disposition: form-data; name=\"isLatest\";"
+                + isLatestString + "\"" + "\r\nContent-Type: text/plain" + "\r\n\r\n";
 
         byte[] requestBodyBytes = requestBody.getBytes(StandardCharsets.UTF_8);
         byte[] endBoundaryBytes = ("\r\n" + endBoundaryLine).getBytes(StandardCharsets.UTF_8);
