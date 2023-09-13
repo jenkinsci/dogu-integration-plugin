@@ -15,13 +15,16 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class DoguApplicationPipelineStep extends Step {
     private String applicationPath;
     private String projectId;
+    private Boolean isLatest;
     private String credentialsId;
 
     @DataBoundConstructor
-    public DoguApplicationPipelineStep(String applicationPath, String projectId, String credentialsId) {
+    public DoguApplicationPipelineStep(
+            String applicationPath, String projectId, String credentialsId, Boolean isLatest) {
         this.applicationPath = applicationPath;
         this.projectId = projectId;
         this.credentialsId = credentialsId;
+        this.isLatest = isLatest;
     }
 
     public String getApplicationPath() {
@@ -34,6 +37,10 @@ public class DoguApplicationPipelineStep extends Step {
 
     public String getCredentialsId() {
         return credentialsId;
+    }
+
+    public Boolean getIsLatest() {
+        return isLatest;
     }
 
     @Override

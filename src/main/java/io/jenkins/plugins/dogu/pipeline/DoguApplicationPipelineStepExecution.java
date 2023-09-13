@@ -26,7 +26,12 @@ public class DoguApplicationPipelineStepExecution extends StepExecution {
     public boolean start() throws Exception {
         String applicationPath = step.getApplicationPath();
         String projectId = step.getProjectId();
+        Boolean isLatest = step.getIsLatest();
         String credentialsId = step.getCredentialsId();
+
+        System.out.println("applicationPath: " + applicationPath);
+        System.out.println("projectId: " + projectId);
+        System.out.println("isLatest: " + isLatest.toString());
 
         Run<?, ?> build = getContext().get(Run.class);
         TaskListener listener = getContext().get(TaskListener.class);
@@ -37,7 +42,7 @@ public class DoguApplicationPipelineStepExecution extends StepExecution {
         DoguOption doguOption = new DoguOption(accessTokenSecret, apiUrl);
 
         try {
-            boolean uploadResult = DoguApi.uploadApplication(applicationPath, projectId, doguOption, logger);
+            boolean uploadResult = DoguApi.uploadApplication(applicationPath, projectId, isLatest, doguOption, logger);
             getContext().onSuccess("Success");
             return uploadResult;
         } catch (Exception e) {

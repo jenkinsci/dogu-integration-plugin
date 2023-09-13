@@ -17,7 +17,8 @@ import java.util.concurrent.Future;
 
 public class DoguApi {
     public static boolean uploadApplication(
-            String applicationPath, String projectId, DoguOption doguOption, PrintStream logger) throws Exception {
+            String applicationPath, String projectId, Boolean isLatest, DoguOption doguOption, PrintStream logger)
+            throws Exception {
         Path filePath;
         byte[] fileContent;
         String mimeType;
@@ -36,8 +37,8 @@ public class DoguApi {
         }
 
         try {
-
-            DoguApiClient.uploadApplication(projectId, fileContent, fileName.toString(), mimeType, doguOption);
+            DoguApiClient.uploadApplication(
+                    projectId, fileContent, fileName.toString(), mimeType, isLatest, doguOption);
             logger.println("Application is uploaded to" + projectId);
         } catch (Exception e) {
             throw e;

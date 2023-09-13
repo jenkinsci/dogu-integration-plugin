@@ -27,13 +27,15 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 public class DoguApplicationBuilder extends Builder {
     private final String projectId;
     private final String applicationPath;
+    private final Boolean isLatest;
     private final String credentialsId;
 
     @DataBoundConstructor
-    public DoguApplicationBuilder(String projectId, String applicationPath, String credentialsId) {
+    public DoguApplicationBuilder(String projectId, String applicationPath, String credentialsId, Boolean isLatest) {
         this.projectId = projectId;
         this.applicationPath = applicationPath;
         this.credentialsId = credentialsId;
+        this.isLatest = isLatest;
     }
 
     public String getProjectId() {
@@ -48,6 +50,10 @@ public class DoguApplicationBuilder extends Builder {
         return credentialsId;
     }
 
+    public Boolean getIsLatest() {
+        return isLatest;
+    }
+
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
         PrintStream logger = listener.getLogger();
@@ -57,7 +63,7 @@ public class DoguApplicationBuilder extends Builder {
         DoguOption doguOption = new DoguOption(accessTokenSecret, apiUrl);
 
         try {
-            DoguApi.uploadApplication(applicationPath, projectId, doguOption, logger);
+            DoguApi.uploadApplication(applicationPath, projectId, isLatest, doguOption, logger);
         } catch (Exception e) {
             e.printStackTrace(logger);
             return false;
