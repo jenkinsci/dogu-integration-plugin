@@ -32,7 +32,6 @@ public class DoguApplicationBuilder extends Builder {
 
     @DataBoundConstructor
     public DoguApplicationBuilder(String projectId, String applicationPath, String credentialsId, Boolean isLatest) {
-        System.out.println("Builder: " + isLatest);
         this.projectId = projectId;
         this.applicationPath = applicationPath;
         this.credentialsId = credentialsId;

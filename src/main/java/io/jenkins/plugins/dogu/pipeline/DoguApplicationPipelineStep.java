@@ -20,7 +20,6 @@ public class DoguApplicationPipelineStep extends Step {
 
     @DataBoundConstructor
     public DoguApplicationPipelineStep(String applicationPath, String projectId, String credentialsId, Boolean isLatest) {
-        System.out.println("PipelineStep: " + isLatest);
         this.applicationPath = applicationPath;
         this.projectId = projectId;
         this.credentialsId = credentialsId;
